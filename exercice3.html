@@ -24,12 +24,13 @@
                 material="color: #4CC3D9; opacity: 0.7; transparent: true;" 
                 animation="property: rotation; to: 0 360 0; loop: true; dur: 2000;"
                 class="clickable"
-                cursor-listener>
+                geometry="primitive: box; width: 1; height: 1; depth: 1;"
+                scale="1 1 1">
             </a-box>
         </a-marker>
         
         <!-- Caméra AR avec curseur -->
-        <a-entity camera>
+        <a-entity camera look-controls wasd-controls>
             <a-cursor 
                 id="cursor"
                 raycaster="objects: .clickable"
@@ -38,21 +39,26 @@
                 animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150"
                 animation__fusing="property: scale; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
                 animation__mouseleave="property: scale; startEvents: mouseleave; to: 1 1 1; dur: 150"
+                position="0 0 -1"
+                geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                material="color: white; shader: flat"
                 cursor="fuse: true; fuseTimeout: 1500">
             </a-cursor>
         </a-entity>
     </a-scene>
 
     <!-- Instructions pour l'utilisateur -->
-    <div style="position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 15px; border-radius: 5px; font-family: Arial, sans-serif; z-index: 1000;">
+    <div style="position: fixed; top: 10px; left: 10px; background: rgba(0,0,0,0.8); color: white; padding: 15px; border-radius: 5px; font-family: Arial, sans-serif; z-index: 1000; max-width: 300px;">
         <h3 style="margin: 0 0 10px 0;">Instructions AR Interactive</h3>
         <p style="margin: 5px 0;">1. Autorisez l'accès à la caméra</p>
         <p style="margin: 5px 0;">2. Pointez vers le marqueur Hiro</p>
-        <p style="margin: 5px 0;">3. Une boîte bleue apparaîtra et tournera</p>
-        <p style="margin: 5px 0;">4. <strong>Cliquez/tapez sur la boîte</strong> pour :</p>
-        <p style="margin: 5px 0; padding-left: 20px;">• Changer sa couleur</p>
-        <p style="margin: 5px 0; padding-left: 20px;">• Accélérer la rotation</p>
-        <p style="margin: 5px 0; padding-left: 20px;">• Changer sa taille</p>
+        <p style="margin: 5px 0;">3. <strong>Cliquez/Tapez sur la boîte</strong></p>
+        <p style="margin: 5px 0;">4. Observez les changements :</p>
+        <ul style="margin: 5px 0; padding-left: 20px;">
+            <li>Couleur change</li>
+            <li>Vitesse de rotation alterne</li>
+            <li>Taille alterne</li>
+        </ul>
         <br>
         <p style="margin: 5px 0; font-size: 12px;">
             <strong>Marqueur Hiro :</strong><br>
@@ -60,64 +66,50 @@
         </p>
     </div>
 
+    <!-- Script pour gérer les interactions -->
     <script>
-        // Variables pour les couleurs et animations
+        let clickCount = 0;
         const colors = ['#4CC3D9', '#EF2D5E', '#FFC65D', '#7BC8A4', '#FF6B6B', '#4ECDC4'];
-        let currentColorIndex = 0;
         let isFastRotation = false;
-        let isScaled = false;
+        let isLargeScale = false;
 
-        // Fonction pour changer la couleur et l'animation de la boîte
-        function changeBoxAppearance() {
-            const box = document.getElementById('interactiveBox');
-            
-            // Changer la couleur
-            currentColorIndex = (currentColorIndex + 1) % colors.length;
-            box.setAttribute('material', `color: ${colors[currentColorIndex]}; opacity: 0.7; transparent: true;`);
-            
-            // Changer l'animation de rotation
-            if (isFastRotation) {
-                // Rotation normale
-                box.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 2000;');
-                isFastRotation = false;
-            } else {
-                // Rotation rapide
-                box.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 500;');
-                isFastRotation = true;
-            }
-            
-            // Changer l'échelle
-            if (isScaled) {
-                // Taille normale
-                box.setAttribute('scale', '1 1 1');
-                isScaled = false;
-            } else {
-                // Taille agrandie
-                box.setAttribute('scale', '1.5 1.5 1.5');
-                isScaled = true;
-            }
-            
-            // Animation de pulsation lors du clic
-            box.setAttribute('animation__pulse', 'property: scale; from: 1 1 1; to: 1.2 1.2 1.2; dur: 200; direction: alternate; loop: 2;');
-            
-            // Supprimer l'animation de pulsation après 400ms
-            setTimeout(() => {
-                box.removeAttribute('animation__pulse');
-            }, 400);
-        }
-
-        // Écouter les événements de clic sur la boîte
         document.addEventListener('DOMContentLoaded', function() {
-            const box = document.getElementById('interactiveBox');
+            const box = document.querySelector('#interactiveBox');
             
-            // Événement pour desktop (souris)
-            box.addEventListener('click', changeBoxAppearance);
-            
-            // Événement pour mobile (touch)
-            box.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                changeBoxAppearance();
-            });
+            if (box) {
+                // Gestion des événements de clic/tap
+                box.addEventListener('click', function() {
+                    clickCount++;
+                    
+                    // Changement de couleur
+                    const newColor = colors[clickCount % colors.length];
+                    box.setAttribute('material', 'color', newColor);
+                    
+                    // Animation de pulsation au clic
+                    box.setAttribute('animation__pulse', 
+                        'property: scale; from: 1 1 1; to: 1.2 1.2 1.2; dur: 200; direction: alternate; loop: 2');
+                    
+                    // Alternance de la vitesse de rotation
+                    isFastRotation = !isFastRotation;
+                    const rotationSpeed = isFastRotation ? 500 : 2000;
+                    box.setAttribute('animation__rotation', 
+                        'property: rotation; to: 0 360 0; loop: true; dur: ' + rotationSpeed);
+                    
+                    // Alternance de l'échelle
+                    isLargeScale = !isLargeScale;
+                    const scale = isLargeScale ? '1.5 1.5 1.5' : '1 1 1';
+                    box.setAttribute('animation__scale', 
+                        'property: scale; to: ' + scale + '; dur: 500; easing: easeInOutQuad');
+                    
+                    console.log('Clic détecté! Couleur:', newColor, 'Rotation rapide:', isFastRotation, 'Grande taille:', isLargeScale);
+                });
+                
+                // Gestion des événements tactiles pour mobile
+                box.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    box.click(); // Déclenche le même comportement que le clic
+                });
+            }
         });
     </script>
 </body>
