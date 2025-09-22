@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TP02 WebAR - Exercice 3 : Interactions par clic/tap</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
 </head>
 <body style="margin: 0; overflow: hidden;">
     <a-scene 
@@ -17,11 +16,11 @@
         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
         
         <!-- Marqueur Hiro avec boîte interactive -->
-        <a-marker preset="hiro" raycaster="objects: .clickable" emitevents="true" cursor="fuse: false; rayOrigin: mouse;">
+        <a-marker preset="hiro" raycaster="objects: .clickable" emitevents="true">
             <a-box 
                 id="interactiveBox"
                 position="0 0.5 0" 
-                material="color: #4CC3D9; opacity: 0.7; transparent: true;" 
+                material="color: #4CC3D9; opacity: 0.8; transparent: true;" 
                 animation="property: rotation; to: 0 360 0; loop: true; dur: 2000;"
                 class="clickable"
                 geometry="primitive: box; width: 1; height: 1; depth: 1;"
@@ -30,7 +29,7 @@
         </a-marker>
         
         <!-- Caméra AR avec curseur -->
-        <a-entity camera look-controls wasd-controls>
+        <a-entity camera>
             <a-cursor 
                 id="cursor"
                 raycaster="objects: .clickable"
@@ -40,8 +39,6 @@
                 animation__fusing="property: scale; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
                 animation__mouseleave="property: scale; startEvents: mouseleave; to: 1 1 1; dur: 150"
                 position="0 0 -1"
-                geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
-                material="color: white; shader: flat"
                 cursor="fuse: true; fuseTimeout: 1500">
             </a-cursor>
         </a-entity>
@@ -73,43 +70,60 @@
         let isFastRotation = false;
         let isLargeScale = false;
 
+        // Attendre que la scène soit chargée
         document.addEventListener('DOMContentLoaded', function() {
-            const box = document.querySelector('#interactiveBox');
-            
-            if (box) {
-                // Gestion des événements de clic/tap
-                box.addEventListener('click', function() {
-                    clickCount++;
-                    
-                    // Changement de couleur
-                    const newColor = colors[clickCount % colors.length];
-                    box.setAttribute('material', 'color', newColor);
-                    
-                    // Animation de pulsation au clic
-                    box.setAttribute('animation__pulse', 
-                        'property: scale; from: 1 1 1; to: 1.2 1.2 1.2; dur: 200; direction: alternate; loop: 2');
-                    
-                    // Alternance de la vitesse de rotation
-                    isFastRotation = !isFastRotation;
-                    const rotationSpeed = isFastRotation ? 500 : 2000;
-                    box.setAttribute('animation__rotation', 
-                        'property: rotation; to: 0 360 0; loop: true; dur: ' + rotationSpeed);
-                    
-                    // Alternance de l'échelle
-                    isLargeScale = !isLargeScale;
-                    const scale = isLargeScale ? '1.5 1.5 1.5' : '1 1 1';
-                    box.setAttribute('animation__scale', 
-                        'property: scale; to: ' + scale + '; dur: 500; easing: easeInOutQuad');
-                    
-                    console.log('Clic détecté! Couleur:', newColor, 'Rotation rapide:', isFastRotation, 'Grande taille:', isLargeScale);
-                });
+            // Attendre un peu plus pour que AR.js soit complètement initialisé
+            setTimeout(function() {
+                const box = document.querySelector('#interactiveBox');
+                console.log('Box trouvée:', box);
                 
-                // Gestion des événements tactiles pour mobile
-                box.addEventListener('touchstart', function(e) {
-                    e.preventDefault();
-                    box.click(); // Déclenche le même comportement que le clic
-                });
-            }
+                if (box) {
+                    // Gestion des événements de clic/tap
+                    box.addEventListener('click', function() {
+                        console.log('Clic détecté sur la boîte!');
+                        clickCount++;
+                        
+                        // Changement de couleur
+                        const newColor = colors[clickCount % colors.length];
+                        box.setAttribute('material', 'color', newColor);
+                        
+                        // Animation de pulsation au clic
+                        box.setAttribute('animation__pulse', 
+                            'property: scale; from: 1 1 1; to: 1.2 1.2 1.2; dur: 200; direction: alternate; loop: 2');
+                        
+                        // Alternance de la vitesse de rotation
+                        isFastRotation = !isFastRotation;
+                        const rotationSpeed = isFastRotation ? 500 : 2000;
+                        box.setAttribute('animation__rotation', 
+                            'property: rotation; to: 0 360 0; loop: true; dur: ' + rotationSpeed);
+                        
+                        // Alternance de l'échelle
+                        isLargeScale = !isLargeScale;
+                        const scale = isLargeScale ? '1.5 1.5 1.5' : '1 1 1';
+                        box.setAttribute('animation__scale', 
+                            'property: scale; to: ' + scale + '; dur: 500; easing: easeInOutQuad');
+                        
+                        console.log('Clic détecté! Couleur:', newColor, 'Rotation rapide:', isFastRotation, 'Grande taille:', isLargeScale);
+                    });
+                    
+                    // Gestion des événements tactiles pour mobile
+                    box.addEventListener('touchstart', function(e) {
+                        e.preventDefault();
+                        console.log('Touch détecté sur la boîte!');
+                        box.click(); // Déclenche le même comportement que le clic
+                    });
+                } else {
+                    console.log('Boîte non trouvée, réessai dans 2 secondes...');
+                    setTimeout(function() {
+                        const boxRetry = document.querySelector('#interactiveBox');
+                        if (boxRetry) {
+                            console.log('Boîte trouvée au deuxième essai!');
+                        } else {
+                            console.log('Boîte toujours non trouvée');
+                        }
+                    }, 2000);
+                }
+            }, 1000);
         });
     </script>
 </body>
