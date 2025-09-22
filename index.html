@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP02 WebAR - Exercice 1</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+</head>
+<body>
+    <a-scene>
+        <!-- Trois boîtes de couleurs différentes qui lévitent à 2 unités au-dessus du plan -->
+        <a-box position="-2 2 0" color="#4CC3D9"></a-box>
+        <a-box position="0 2 0" color="#EF2D5E"></a-box>
+        <a-box position="2 2 0" color="#FFC65D"></a-box>
+        
+        <!-- Plan sous les boîtes pour servir de surface de base -->
+        <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4"></a-plane>
+        
+        <!-- Caméra positionnée à 10 unités de hauteur et 15 unités de distance -->
+        <a-entity camera position="0 10 15" look-controls wasd-controls></a-entity>
+        
+        <!-- Éclairage pour mieux voir la scène -->
+        <a-light type="ambient" color="#404040"></a-light>
+        <a-light type="directional" position="0 10 5" color="#ffffff"></a-light>
+    </a-scene>
+</body>
+</html>
