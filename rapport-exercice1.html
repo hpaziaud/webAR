@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP02 WebAR - Rapport complet : Exercices 1 & 2</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        h3 {
+            color: #2c3e50;
+            margin-top: 25px;
+        }
+        .objective {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        .tech-list {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+        .tech-list ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .box-info {
+            display: flex;
+            justify-content: space-between;
+            background-color: #fff3cd;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid #ffc107;
+        }
+        .conclusion {
+            background-color: #d4edda;
+            padding: 20px;
+            border-radius: 5px;
+            border-left: 4px solid #28a745;
+            margin-top: 20px;
+        }
+        .github-link {
+            background-color: #24292e;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .github-link:hover {
+            background-color: #0366d6;
+        }
+        code {
+            background-color: #f1f2f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TP02 WebAR - Rapport complet : Exercices 1 & 2</h1>
+
+        <div class="objective">
+            <h2>Objectifs</h2>
+            <p><strong>Exercice 1 :</strong> Créer une scène 3D interactive en utilisant le framework A-Frame pour le développement WebAR.</p>
+            <p><strong>Exercice 2 :</strong> Intégrer AR.js et tester la réalité augmentée sur mobile avec le marqueur Hiro.</p>
+        </div>
+
+        <h2>Réalisation</h2>
+
+        <h3>Structure du projet</h3>
+        <ul>
+            <li><strong>Exercice 1</strong> : <code>index.html</code> - Scène 3D A-Frame</li>
+            <li><strong>Exercice 2</strong> : <code>exercice2.html</code> - Application AR.js</li>
+            <li><strong>Framework utilisé</strong> : A-Frame (version 1.4.0) + AR.js via CDN</li>
+            <li><strong>Dépôt GitHub</strong> : <a href="https://github.com/hpaziaud/webAR.git" class="github-link">https://github.com/hpaziaud/webAR.git</a></li>
+        </ul>
+
+        <h2>Exercice 1 : Scène 3D avec A-Frame</h2>
+
+        <h3>Éléments de la scène 3D</h3>
+
+        <h4>1. Trois boîtes colorées</h4>
+        <div class="box-info">
+            <span><strong>Boîte bleue</strong> (#4CC3D9)</span>
+            <span>Position : (-2, 2, 0)</span>
+        </div>
+        <div class="box-info">
+            <span><strong>Boîte rouge</strong> (#EF2D5E)</span>
+            <span>Position : (0, 2, 0)</span>
+        </div>
+        <div class="box-info">
+            <span><strong>Boîte jaune</strong> (#FFC65D)</span>
+            <span>Position : (2, 2, 0)</span>
+        </div>
+        <p><em>Toutes les boîtes lévitent à 2 unités au-dessus du plan de base.</em></p>
+
+        <h4>2. Plan de base</h4>
+        <ul>
+            <li><strong>Surface verte</strong> (#7BC8A4) de 10x10 unités</li>
+            <li>Positionné à (0, 0, 0) avec rotation -90° sur l'axe X</li>
+            <li>Sert de sol pour la scène</li>
+        </ul>
+
+        <h4>3. Caméra</h4>
+        <ul>
+            <li><strong>Position</strong> : (0, 10, 15)</li>
+            <li><strong>Hauteur</strong> : 10 unités</li>
+            <li><strong>Distance</strong> : 15 unités du centre</li>
+            <li><strong>Orientation</strong> : Vers le centre du plan pour une vue d'ensemble</li>
+        </ul>
+
+        <h4>4. Éclairage</h4>
+        <ul>
+            <li><strong>Éclairage ambiant</strong> : Lumière douce générale</li>
+            <li><strong>Éclairage directionnel</strong> : Lumière principale pour les ombres</li>
+        </ul>
+
+        <h2>Exercice 2 : Intégration AR.js avec marqueur Hiro</h2>
+
+        <h3>Fonctionnalités AR</h3>
+        <ul>
+            <li><strong>Bibliothèque AR.js</strong> : Intégrée via CDN pour la détection de marqueurs</li>
+            <li><strong>Marqueur Hiro</strong> : Marqueur prédéfini pour la détection AR</li>
+            <li><strong>Boîte semi-transparente</strong> : Apparaît lors de la détection du marqueur</li>
+            <li><strong>Animation de rotation</strong> : La boîte tourne automatiquement sur elle-même</li>
+            <li><strong>Interface mobile</strong> : Optimisée pour les smartphones</li>
+        </ul>
+
+        <h3>Configuration technique</h3>
+        <div class="box-info">
+            <span><strong>Détection</strong></span>
+            <span>Mode mono_and_matrix</span>
+        </div>
+        <div class="box-info">
+            <span><strong>Marqueur</strong></span>
+            <span>Hiro (3x3 matrix)</span>
+        </div>
+        <div class="box-info">
+            <span><strong>Animation</strong></span>
+            <span>Rotation 360° en 2 secondes</span>
+        </div>
+
+        <h3>Instructions d'utilisation</h3>
+        <ol>
+            <li>Ouvrir <code>exercice2.html</code> sur un smartphone</li>
+            <li>Autoriser l'accès à la caméra</li>
+            <li>Télécharger le <a href="https://jeromeetienne.github.io/AR.js/data/images/HIRO.jpg" target="_blank">marqueur Hiro</a></li>
+            <li>Pointer la caméra vers le marqueur</li>
+            <li>Observer la boîte bleue semi-transparente qui apparaît et tourne</li>
+        </ol>
+
+        <h2>Technologies utilisées</h2>
+        <div class="tech-list">
+            <ul>
+                <li><strong>A-Frame</strong> : Framework HTML pour la réalité virtuelle/augmentée</li>
+                <li><strong>AR.js</strong> : Bibliothèque JavaScript pour la réalité augmentée web</li>
+                <li><strong>WebGL</strong> : Rendu 3D via Three.js (intégré dans A-Frame)</li>
+                <li><strong>WebRTC</strong> : Accès à la caméra pour la détection AR</li>
+                <li><strong>HTML5</strong> : Structure de base</li>
+            </ul>
+        </div>
+
+        <h2>Résultats</h2>
+        <h3>Exercice 1</h3>
+        <p>Une scène 3D fonctionnelle accessible via navigateur web, avec trois objets colorés lévitant au-dessus d'un plan, vue depuis une caméra positionnée pour offrir une perspective optimale de la scène.</p>
+        
+        <h3>Exercice 2</h3>
+        <p>Une application de réalité augmentée fonctionnelle sur mobile, utilisant la détection de marqueurs pour afficher des objets 3D animés dans l'espace réel. L'expérience AR est fluide et interactive.</p>
+
+        <div class="conclusion">
+            <h2>Conclusion</h2>
+            <p><strong>Exercice 1 :</strong> Démontre la simplicité d'utilisation d'A-Frame pour créer rapidement des expériences 3D web. Le framework permet de développer des scènes interactives avec une syntaxe HTML intuitive.</p>
+            <p><strong>Exercice 2 :</strong> Illustre l'intégration réussie d'AR.js avec A-Frame pour créer des expériences de réalité augmentée fonctionnelles sur mobile. La détection de marqueurs et l'animation 3D offrent une expérience utilisateur immersive.</p>
+            <p><strong>Bilan global :</strong> Ces exercices facilitent l'apprentissage du développement WebAR en combinant la puissance d'A-Frame avec les capacités AR d'AR.js, ouvrant la voie à des applications de réalité augmentée web avancées.</p>
+        </div>
+    </div>
+</body>
+</html>
