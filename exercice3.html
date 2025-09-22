@@ -28,20 +28,8 @@
             </a-box>
         </a-marker>
         
-        <!-- Caméra AR avec curseur -->
-        <a-entity camera>
-            <a-cursor 
-                id="cursor"
-                raycaster="objects: .clickable"
-                geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
-                material="color: white; shader: flat"
-                animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150"
-                animation__fusing="property: scale; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
-                animation__mouseleave="property: scale; startEvents: mouseleave; to: 1 1 1; dur: 150"
-                position="0 0 -1"
-                cursor="fuse: true; fuseTimeout: 1500">
-            </a-cursor>
-        </a-entity>
+        <!-- Caméra AR -->
+        <a-entity camera></a-entity>
     </a-scene>
 
     <!-- Instructions pour l'utilisateur -->
@@ -49,7 +37,7 @@
         <h3 style="margin: 0 0 10px 0;">Instructions AR Interactive</h3>
         <p style="margin: 5px 0;">1. Autorisez l'accès à la caméra</p>
         <p style="margin: 5px 0;">2. Pointez vers le marqueur Hiro</p>
-        <p style="margin: 5px 0;">3. <strong>Cliquez/Tapez sur la boîte</strong></p>
+        <p style="margin: 5px 0;">3. <strong>Touchez n'importe où sur l'écran</strong></p>
         <p style="margin: 5px 0;">4. Observez les changements :</p>
         <ul style="margin: 5px 0; padding-left: 20px;">
             <li>Couleur change</li>
@@ -70,6 +58,37 @@
         let isFastRotation = false;
         let isLargeScale = false;
 
+        // Fonction pour déclencher les interactions
+        function triggerInteraction() {
+            const box = document.querySelector('#interactiveBox');
+            if (box) {
+                console.log('Interaction déclenchée!');
+                clickCount++;
+                
+                // Changement de couleur
+                const newColor = colors[clickCount % colors.length];
+                box.setAttribute('material', 'color', newColor);
+                
+                // Animation de pulsation au clic
+                box.setAttribute('animation__pulse', 
+                    'property: scale; from: 1 1 1; to: 1.2 1.2 1.2; dur: 200; direction: alternate; loop: 2');
+                
+                // Alternance de la vitesse de rotation
+                isFastRotation = !isFastRotation;
+                const rotationSpeed = isFastRotation ? 500 : 2000;
+                box.setAttribute('animation__rotation', 
+                    'property: rotation; to: 0 360 0; loop: true; dur: ' + rotationSpeed);
+                
+                // Alternance de l'échelle
+                isLargeScale = !isLargeScale;
+                const scale = isLargeScale ? '1.5 1.5 1.5' : '1 1 1';
+                box.setAttribute('animation__scale', 
+                    'property: scale; to: ' + scale + '; dur: 500; easing: easeInOutQuad');
+                
+                console.log('Interaction! Couleur:', newColor, 'Rotation rapide:', isFastRotation, 'Grande taille:', isLargeScale);
+            }
+        }
+
         // Attendre que la scène soit chargée
         document.addEventListener('DOMContentLoaded', function() {
             // Attendre un peu plus pour que AR.js soit complètement initialisé
@@ -78,39 +97,17 @@
                 console.log('Box trouvée:', box);
                 
                 if (box) {
-                    // Gestion des événements de clic/tap
-                    box.addEventListener('click', function() {
-                        console.log('Clic détecté sur la boîte!');
-                        clickCount++;
-                        
-                        // Changement de couleur
-                        const newColor = colors[clickCount % colors.length];
-                        box.setAttribute('material', 'color', newColor);
-                        
-                        // Animation de pulsation au clic
-                        box.setAttribute('animation__pulse', 
-                            'property: scale; from: 1 1 1; to: 1.2 1.2 1.2; dur: 200; direction: alternate; loop: 2');
-                        
-                        // Alternance de la vitesse de rotation
-                        isFastRotation = !isFastRotation;
-                        const rotationSpeed = isFastRotation ? 500 : 2000;
-                        box.setAttribute('animation__rotation', 
-                            'property: rotation; to: 0 360 0; loop: true; dur: ' + rotationSpeed);
-                        
-                        // Alternance de l'échelle
-                        isLargeScale = !isLargeScale;
-                        const scale = isLargeScale ? '1.5 1.5 1.5' : '1 1 1';
-                        box.setAttribute('animation__scale', 
-                            'property: scale; to: ' + scale + '; dur: 500; easing: easeInOutQuad');
-                        
-                        console.log('Clic détecté! Couleur:', newColor, 'Rotation rapide:', isFastRotation, 'Grande taille:', isLargeScale);
+                    // Détection tactile sur tout l'écran pour mobile
+                    document.addEventListener('touchstart', function(e) {
+                        e.preventDefault();
+                        console.log('Touch détecté sur l\'écran!');
+                        triggerInteraction();
                     });
                     
-                    // Gestion des événements tactiles pour mobile
-                    box.addEventListener('touchstart', function(e) {
-                        e.preventDefault();
-                        console.log('Touch détecté sur la boîte!');
-                        box.click(); // Déclenche le même comportement que le clic
+                    // Détection clic pour desktop
+                    document.addEventListener('click', function(e) {
+                        console.log('Clic détecté sur l\'écran!');
+                        triggerInteraction();
                     });
                 } else {
                     console.log('Boîte non trouvée, réessai dans 2 secondes...');
@@ -118,6 +115,14 @@
                         const boxRetry = document.querySelector('#interactiveBox');
                         if (boxRetry) {
                             console.log('Boîte trouvée au deuxième essai!');
+                            // Ajouter les événements après avoir trouvé la boîte
+                            document.addEventListener('touchstart', function(e) {
+                                e.preventDefault();
+                                triggerInteraction();
+                            });
+                            document.addEventListener('click', function(e) {
+                                triggerInteraction();
+                            });
                         } else {
                             console.log('Boîte toujours non trouvée');
                         }
